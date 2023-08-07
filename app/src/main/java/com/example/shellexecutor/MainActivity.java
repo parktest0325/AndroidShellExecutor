@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import android.os.Handler;
@@ -20,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private Handler handler = new Handler(Looper.getMainLooper());
+    private List<String> commandHistory = new ArrayList<>();
+    private int currentHistoryIndex = -1;
+
 
     private String executeCommand(String command, String commandType) {
         Process process = null;
@@ -73,18 +78,63 @@ public class MainActivity extends AppCompatActivity {
         Button button3 = findViewById(R.id.button3);
         Button button4 = findViewById(R.id.button4);
 
+        Button buttonHistoryUp = findViewById(R.id.buttonHistoryUp);
+        Button buttonHistoryDown = findViewById(R.id.buttonHistoryDown);
+        Button buttonHistoryDelete = findViewById(R.id.buttonDeleteCommand);
+
+
         button.setOnClickListener(v -> executeAndDisplay("NON ROOT"));
         button2.setOnClickListener(v -> executeAndDisplay("ROOT"));
         button3.setOnClickListener(v -> editText.append(" 2> /dev/null"));
         button4.setOnClickListener(v -> editText.setText(""));
+
+        buttonHistoryDelete.setOnClickListener(v -> deleteHistory());
+        buttonHistoryUp.setOnClickListener(v -> moveHistoryUp());
+        buttonHistoryDown.setOnClickListener(v -> moveHistoryDown());
     }
 
     private void executeAndDisplay(String commandType) {
         textView.setText("");
         String textToFind = editText.getText().toString();
+
+        if (commandHistory.isEmpty() || !textToFind.equals(commandHistory.get(commandHistory.size() - 1))) {
+            commandHistory.add(textToFind);
+            currentHistoryIndex++;
+        }
+
         executorService.execute(() -> {
             String result = executeCommand(textToFind, commandType);
             handler.post(() -> textView.setText(result));
         });
+    }
+
+    private void moveHistoryUp() {
+        if (commandHistory.isEmpty() || currentHistoryIndex <= 0) return;
+
+        currentHistoryIndex--;
+        editText.setText(commandHistory.get(currentHistoryIndex));
+    }
+
+    private void moveHistoryDown() {
+        if (commandHistory.isEmpty() || currentHistoryIndex >= commandHistory.size() - 1) return;
+
+        currentHistoryIndex++;
+        editText.setText(commandHistory.get(currentHistoryIndex));
+    }
+
+    private void deleteHistory() {
+        if (currentHistoryIndex >= 0 && currentHistoryIndex < commandHistory.size()) {
+            commandHistory.remove(currentHistoryIndex);
+
+            if (currentHistoryIndex >= commandHistory.size()) {
+                currentHistoryIndex = commandHistory.size() - 1;
+            }
+
+            if (currentHistoryIndex >= 0) {
+                editText.setText(commandHistory.get(currentHistoryIndex));
+            } else {
+                editText.setText("");
+            }
+        }
     }
 }
