@@ -5,5 +5,5 @@ Like adb shell
 
 * Execute command with app privileges
 * Executing commands with root privileges (need rooting)
-* ETC...
+* Any idea??
 * It will be updated if any features are needed.
