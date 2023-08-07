@@ -11,9 +11,39 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Enter command"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonHistoryUp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonHistoryUp"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="↑"
+        android:padding="0dp"
+        app:layout_constraintEnd_toStartOf="@+id/buttonHistoryDown"
+        app:layout_constraintTop_toTopOf="@+id/editText"
+        app:layout_constraintBottom_toBottomOf="@+id/editText" />
+
+    <Button
+        android:id="@+id/buttonHistoryDown"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="↓"
+        android:padding="0dp"
+        app:layout_constraintEnd_toStartOf="@+id/buttonDeleteCommand"
+        app:layout_constraintTop_toTopOf="@+id/editText"
+        app:layout_constraintBottom_toBottomOf="@+id/editText" />
+
+    <Button
+        android:id="@+id/buttonDeleteCommand"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="Del"
+        android:padding="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editText"
+        app:layout_constraintBottom_toBottomOf="@+id/editText" />
 
     <Button
         android:id="@+id/button"
