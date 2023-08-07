@@ -24,24 +24,32 @@ public class MainActivity extends AppCompatActivity {
     private String executeCommand(String command, String commandType) {
         Process process = null;
         try {
+            boolean isBackgroundCommand = command.trim().endsWith("&");
+            StringBuilder output = new StringBuilder("===== [START] =====\n");
+
             if (commandType.equals("ROOT"))
                 process = Runtime.getRuntime().exec(new String[]{"su", "-c", command});
             else
                 process = Runtime.getRuntime().exec(new String[]{"sh", "-c", command});
 
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-            BufferedReader errorBufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getErrorStream()));
+            if (!isBackgroundCommand) {
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream()));
+                BufferedReader errorBufferedReader = new BufferedReader(
+                        new InputStreamReader(process.getErrorStream()));
 
-            String line;
-            StringBuilder output = new StringBuilder("===== [START] =====\n");
-            while ((line = bufferedReader.readLine()) != null) {
-                output.append(line).append("\n");
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+                while ((line = errorBufferedReader.readLine()) != null) {
+                    output.append("ERROR: ").append(line).append("\n");
+                }
             }
-            while ((line = errorBufferedReader.readLine()) != null) {
-                output.append("ERROR: ").append(line).append("\n");
+            else {
+                output.append("=> is background command").append("\n");
             }
+
             output.append("===== [END] =====\n");
             return output.toString();
         } catch (Exception e) {
